@@ -1,13 +1,16 @@
 class GameBoard{
   constructor (){
-    this.BOARD_SIZE = 3;
-    this.board = this.setBoard();
+    this.board = this.createBoard();
   }
 
-  setBoard(){
-    console.log("set board");
+  createBoard(){
     // Manually set board for now
-    return [[new Cell(),new Cell(),new Cell()],[new Cell(),new Cell(),new Cell()],[new Cell(),new Cell(),new Cell()]]
+    return [[new Cell(),new Cell(),new Cell()],[new Cell(),new Cell(),new Cell()],[new Cell(),new Cell(),new Cell()]];
+  }
+
+  setCellSymbol(row,column,symbol){
+    this.board[row][column].setValue(symbol);
+    this.printBoard();
   }
 
   printBoard(){
@@ -15,6 +18,7 @@ class GameBoard{
       let rowString = row.map(cell => cell.getValue());
       console.log(rowString);
     }
+    console.log("");
   }
 }
 
@@ -23,8 +27,8 @@ class Cell{
     this.value = null;
   }
 
-  setValue(player){
-    this.playerOwner = player;
+  setValue(symbol){
+    this.value = symbol;
   }
 
   getValue(){
@@ -36,15 +40,26 @@ class Player{
   constructor (symbol){
     this.playerSymbol = symbol;
   }
+
+  getSymbol(){
+    return this.playerSymbol;
+  }
 }
 
-// // function GameHandler{
-
-// // }
-// Create Players
-const Player1 = new Player("X")
-const Player2 = new Player("O")
-
+// Setup
+const PLAYER_1 = new Player("O");
+const PLAYER_2 = new Player("X");
+let activePlayer = PLAYER_1;
 let board = new GameBoard();
-board.setBoard();
 board.printBoard();
+
+function gameHandler(){
+  board.setCellSymbol(1,1,activePlayer.getSymbol());
+  // switchPlayer();
+}
+
+function switchPlayer(){
+  return PLAYER_1 ? PLAYER_2 : PLAYER_1;
+}
+
+gameHandler();
