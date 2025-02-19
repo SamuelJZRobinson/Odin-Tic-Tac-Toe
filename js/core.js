@@ -1,6 +1,9 @@
 // DOM
 const BUT_CELLS = document.querySelectorAll("button.cell");
+const BUT_RESET = document.querySelector("button#reset");
 const ACTIVE_PLAYER_VALUE = document.querySelector("#active-player-value");
+const POP_UP_GAMEOVER_CONTAINER = document.querySelector("#pop-up-gameover-container");
+const WINNER_VALUE = document.querySelector("#winner-value");
 
 // Events
 BUT_CELLS.forEach(button => {
@@ -11,12 +14,30 @@ BUT_CELLS.forEach(button => {
   })
 })
 
+BUT_RESET.addEventListener("click", () => {
+  gameManager.reset();
+})
+
 // Core Logic
 class GameManager {
   constructor() {
     this.PLAYERS = [new Player("Player","X"),new Player("CPU","O")]
     this.activePlayer = this.PLAYERS[0];
     this.gameBoard = new GameBoard();
+    this.winner = undefined;
+    this.WIN_CONDITIONS = [
+      // Horizontal rows
+      [0, 1, 2],
+      [3, 4 ,5],
+      [6, 7 ,8],
+      // Vertical Rows
+      [0, 3, 6],
+      [1, 4, 7],
+      [2, 5, 8],
+      // Diagonal Rows
+      [0, 4, 8],
+      [2, 4, 6]
+    ]
   }
 
   getActivePlayerName() {
@@ -33,15 +54,13 @@ class GameManager {
   }
 
   play(index) {
+    if (this.winner) return this.gameOver();
+
     this.playerMove(index);
-    
-    if (this.gameBoard.getMovesLeft() > 1) {
-      this.cpuMove();
-    }
-    else {
-      console.log("Gameover");
-      console.log(this.gameBoard.getMovesLeft());
-    }
+    if (this.winner || this.gameBoard.getMovesLeft() <= 0) return this.gameOver();
+
+    this.cpuMove();
+    if (this.winner) return this.gameOver();
   }
 
   playerMove(index) {
@@ -49,6 +68,7 @@ class GameManager {
     if (CELL.getValue() != undefined) return;
 
     CELL.setValue(this.activePlayer);
+    this.checkWin();
     this.updateCellUI(index);
     this.changeActivePlayer();
     this.gameBoard.decMovesLeft();
@@ -61,6 +81,7 @@ class GameManager {
     let availableCells = cellIndices .filter(index => index !== null);
     const RANDOM_INDEX = availableCells[Math.floor(Math.random() * availableCells.length)];
     this.gameBoard.board[RANDOM_INDEX].setValue(this.activePlayer);
+    this.checkWin();
     this.updateCellUI(RANDOM_INDEX);
     this.changeActivePlayer();
     this.gameBoard.decMovesLeft();
@@ -71,6 +92,47 @@ class GameManager {
     BUT_CELLS[index].textContent = this.activePlayer.symbol;
   }
   
+  checkWin() {
+    const BOARD = this.gameBoard.getBoard();
+
+    for (let i = 0; i < this.WIN_CONDITIONS.length; i++) {
+      const condition = this.WIN_CONDITIONS[i];
+      const cellA = BOARD[condition[0]].getValue();
+      const cellB = BOARD[condition[1]].getValue();
+      const cellC = BOARD[condition[2]].getValue();
+
+      if (cellA === undefined || cellB === undefined || cellC === undefined) {
+        continue;
+      }
+
+      if (cellA == cellB && cellB == cellC) {
+        this.winner = this.getActivePlayerName();
+        break;
+      }
+    }
+  }
+
+  gameOver() {
+    if (this.winner === undefined) {
+      WINNER_VALUE.textContent = "Tie";
+    }
+    else {
+      WINNER_VALUE.textContent = `${this.winner} won the game!`;
+    }
+
+    POP_UP_GAMEOVER_CONTAINER.style.display = "block";
+  }
+
+  reset() {
+    this.activePlayer = this.PLAYERS[0];
+    this.gameBoard = new GameBoard();
+    this.winner = undefined;
+    this.updateActivePlayerUI();
+    BUT_CELLS.forEach(button => {
+      button.textContent = "";
+    })
+    POP_UP_GAMEOVER_CONTAINER.style.display = "none";
+  }
 }
 
 class GameBoard {
@@ -81,6 +143,10 @@ class GameBoard {
 
   createBoard() {
     return Array(9).fill(undefined).map(() => new Cell());
+  }
+
+  getBoard(){ 
+    return this.board;
   }
 
   decMovesLeft() {
@@ -119,4 +185,4 @@ class Player {
 
 // Create Board
 let gameManager = new GameManager();
-gameManager.updateActivePlayerUI();
+gameManager.reset();
