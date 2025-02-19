@@ -5,7 +5,7 @@ const ACTIVE_PLAYER_VALUE = document.querySelector("#active-player-value");
 // Events
 BUT_CELLS.forEach(button => {
   button.addEventListener("click", () => {
-    const INDEX = button.dataset.id;
+    const INDEX = Number(button.dataset.id);
     console.log(INDEX);
     gameManager.play(INDEX);
   })
@@ -57,8 +57,8 @@ class GameManager {
   cpuMove() {
     console.log("Cpu move");
     // Map available array cells as indexes and filter out what is already taken
-    let cellIndexes = this.gameBoard.board.map((cell, index) => cell.getValue() === undefined ? index : null)
-    let availableCells = cellIndexes.filter(index => index !== null);
+    let cellIndices  = this.gameBoard.board.map((cell, index) => cell.getValue() === undefined ? index : null)
+    let availableCells = cellIndices .filter(index => index !== null);
     const RANDOM_INDEX = availableCells[Math.floor(Math.random() * availableCells.length)];
     this.gameBoard.board[RANDOM_INDEX].setValue(this.activePlayer);
     this.updateCellUI(RANDOM_INDEX);
@@ -68,7 +68,7 @@ class GameManager {
 
   updateCellUI(index) {
     if (BUT_CELLS[index].textContent !== "") return;
-    BUT_CELLS[index].textContent = gameManager.activePlayer.symbol;
+    BUT_CELLS[index].textContent = this.activePlayer.symbol;
   }
   
 }
