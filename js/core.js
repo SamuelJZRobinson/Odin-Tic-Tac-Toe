@@ -46,11 +46,6 @@ class GameManager {
 
   changeActivePlayer() {
     this.activePlayer = this.activePlayer === this.PLAYERS[0] ? this.PLAYERS[1] : this.PLAYERS[0];
-    this.updateActivePlayerUI();
-  }
-  
-  updateActivePlayerUI() {
-    ACTIVE_PLAYER_VALUE.innerHTML = `<b>Turn:</b> ${this.getActivePlayerName()}`;
   }
 
   play(index) {
@@ -127,7 +122,6 @@ class GameManager {
     this.activePlayer = this.PLAYERS[0];
     this.gameBoard = new GameBoard();
     this.winner = undefined;
-    this.updateActivePlayerUI();
     BUT_CELLS.forEach(button => {
       button.textContent = "";
     })
