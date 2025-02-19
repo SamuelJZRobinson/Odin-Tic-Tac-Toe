@@ -9,7 +9,6 @@ const WINNER_VALUE = document.querySelector("#winner-value");
 BUT_CELLS.forEach(button => {
   button.addEventListener("click", () => {
     const INDEX = Number(button.dataset.id);
-    console.log(INDEX);
     gameManager.play(INDEX);
   })
 })
@@ -61,8 +60,10 @@ class GameManager {
   playerMove(index) {
     const CELL = this.gameBoard.board[index];
     if (CELL.getValue() != undefined) return;
+    BUT_CELLS[index].disabled = true;
 
     CELL.setValue(this.activePlayer);
+
     this.checkWin();
     this.updateCellUI(index);
     this.changeActivePlayer();
@@ -70,16 +71,18 @@ class GameManager {
   }
 
   cpuMove() {
-    console.log("Cpu move");
     // Map available array cells as indexes and filter out what is already taken
     let cellIndices  = this.gameBoard.board.map((cell, index) => cell.getValue() === undefined ? index : null)
     let availableCells = cellIndices .filter(index => index !== null);
     const RANDOM_INDEX = availableCells[Math.floor(Math.random() * availableCells.length)];
     this.gameBoard.board[RANDOM_INDEX].setValue(this.activePlayer);
+    BUT_CELLS[RANDOM_INDEX].disabled = true;
+
     this.checkWin();
     this.updateCellUI(RANDOM_INDEX);
     this.changeActivePlayer();
     this.gameBoard.decMovesLeft();
+
   }
 
   updateCellUI(index) {
@@ -124,6 +127,7 @@ class GameManager {
     this.winner = undefined;
     BUT_CELLS.forEach(button => {
       button.textContent = "";
+      button.disabled = false;
     })
     POP_UP_GAMEOVER_CONTAINER.style.display = "none";
   }
