@@ -3,9 +3,7 @@
 - Browser Tic Tac Toe game with a 3x3 grid.
 
 **Tech Used:**
-- HTML
-- CSS
-- JS
+- React
 
 **Image Credits:**
 - https://www.flaticon.com/free-icon/tic-tac-toe_2313850
