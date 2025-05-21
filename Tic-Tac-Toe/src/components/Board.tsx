@@ -5,12 +5,35 @@ function Board() {
   const [cells, setCells] = useState(Array(9).fill(""));
 
   function handleClick(i) {
+    // Don't modify existing values
+    if (cells[i]) {
+      return;
+    }
+
     // Create cell array copy
     const nextCells = cells.slice();
     // Set cell item, change default value to token
     nextCells[i] = "X";
     // Trigger re-render
     setCells(nextCells);
+
+    cpuMove(nextCells);
+  }
+
+  function cpuMove(currentCells) {
+    // Get available cells
+    const cellOptions = currentCells
+      .map((cell, index) => (cell === "" ? index : ""))
+      .filter((index) => index !== "");
+
+    // Get random index
+    const RANDOM_INDEX =
+      cellOptions[Math.floor(Math.random() * cellOptions.length)];
+
+    // Set cell item, change default value to token
+    currentCells[RANDOM_INDEX] = "O";
+    // Trigger re-render
+    setCells(currentCells);
   }
 
   return (
