@@ -1,7 +1,9 @@
-function Cell({value}){
+function Cell({ value, onCellClick }) {
   return (
-    <button className="cell">{value}</button>
-  )
+    <button className="cell" onClick={onCellClick}>
+      {value}
+    </button>
+  );
 }
 
 export default Cell;
